@@ -2,87 +2,168 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <title>Sustainly SAP - Ortak Panel</title>
+    <title>Sustainly SAP - Pro Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=Inter:wght@300;400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background: #0f172a; color: #f8fafc; }
+        .font-brand { font-family: 'Orbitron', sans-serif; }
+        .glass { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.1); }
+        .solar-bg { background-image: url('https://images.unsplash.com/photo-1509391366360-2e959784a276?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80'); background-size: cover; background-position: center; }
+    </style>
 </head>
-<body class="bg-slate-50 min-h-screen">
-    <div id="app" class="p-4 md:p-8">
-        <header class="flex justify-between items-center mb-8 bg-white p-6 rounded-2xl shadow-sm border-b-4 border-green-500">
-            <h1 class="text-2xl font-black">Sustainly <span class="text-green-600">SAP</span></h1>
-            <div class="flex gap-2">
-                <button @click="verileriYukle" class="bg-blue-500 text-white px-4 py-2 rounded-xl text-sm font-bold">🔄 Güncelle</button>
-                <button @click="showAddModal = true" class="bg-green-600 text-white px-4 py-2 rounded-xl text-sm font-bold">+ Yeni Proje</button>
-            </div>
-        </header>
+<body class="solar-bg min-h-screen bg-fixed">
+    <div id="app" class="min-h-screen bg-slate-900/80 backdrop-brightness-50 pb-20">
+        
+        <header class="glass sticky top-0 z-50 p-4 mb-8">
+            <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+                <div class="text-center md:text-left">
+                    <h1 class="text-3xl font-brand font-black text-green-400 tracking-tighter italic">SUSTAINLY <span class="text-white not-italic">SAP</span></h1>
+                    <p class="text-[10px] uppercase tracking-[0.4em] font-bold text-slate-400">Solar Asset Platform v4.0</p>
+                </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div v-for="(m, index) in musteriler" :key="index" class="bg-white p-6 rounded-2xl shadow-md relative group">
-                <h3 class="text-xl font-bold text-slate-800">{{ m.ad }}</h3>
-                <p class="text-sm text-green-600 font-bold mb-4 uppercase">{{ m.sehir }}</p>
-                
-                <div class="space-y-3">
-                    <div v-for="s in asamalar" :key="s" class="flex justify-between items-center text-xs border-b pb-1">
-                        <span>{{ s }}</span>
-                        <input type="checkbox" v-model="m.durumlar[s]" @change="saveData" class="w-5 h-5 accent-green-600">
+                <div class="flex gap-4 bg-slate-800/50 p-3 rounded-2xl border border-white/5">
+                    <div class="text-center border-r border-white/10 pr-4">
+                        <p class="text-[9px] font-bold text-slate-500 uppercase">Dolar / TRY</p>
+                        <p class="text-sm font-black text-green-400">{{ rates.USD }} ₺</p>
+                    </div>
+                    <div class="text-center">
+                        <p class="text-[9px] font-bold text-slate-500 uppercase">Euro / TRY</p>
+                        <p class="text-sm font-black text-blue-400">{{ rates.EUR }} ₺</p>
                     </div>
                 </div>
 
-                <div class="mt-4 h-2 bg-gray-100 rounded-full overflow-hidden">
-                    <div class="h-full bg-green-500 transition-all" :style="{ width: calculateProgress(m) + '%' }"></div>
-                </div>
-                <div class="text-right text-[10px] font-bold mt-1">%{{ calculateProgress(m) }} Tamamlandı</div>
-            </div>
-        </div>
-
-        <div v-if="showAddModal" class="fixed inset-0 bg-black/50 backdrop-blur flex items-center justify-center p-4 z-50">
-            <div class="bg-white p-8 rounded-3xl w-full max-w-md">
-                <h2 class="text-xl font-black mb-4">Yeni Proje Ekle</h2>
-                <input v-model="newMusteri.ad" placeholder="Müşteri Adı" class="w-full border p-3 rounded-xl mb-3 outline-none focus:ring-2 focus:ring-green-500">
-                <input v-model="newMusteri.sehir" placeholder="İl" class="w-full border p-3 rounded-xl mb-6 outline-none focus:ring-2 focus:ring-green-500">
                 <div class="flex gap-2">
-                    <button @click="showAddModal = false" class="flex-1 py-3 font-bold text-slate-400">İptal</button>
-                    <button @click="addMusteri" class="flex-1 py-3 bg-green-600 text-white rounded-xl font-bold">Kaydet</button>
+                    <button @click="verileriYukle" class="bg-slate-700 hover:bg-slate-600 p-3 rounded-xl transition">🔄</button>
+                    <button @click="showAddModal = true" class="bg-green-600 hover:bg-green-500 px-6 py-3 rounded-xl font-bold shadow-lg shadow-green-900/20">+ Yeni Proje</button>
+                </div>
+            </div>
+        </header>
+
+        <main class="max-w-7xl mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div v-for="(m, index) in musteriler" :key="index" class="glass rounded-[2.5rem] overflow-hidden transition-all hover:scale-[1.02] border-t-4 border-green-500">
+                    <div class="p-8">
+                        <div class="flex justify-between items-start mb-6">
+                            <div>
+                                <span class="text-[10px] font-black text-green-400 bg-green-400/10 px-3 py-1 rounded-full uppercase tracking-widest">{{ m.sehir }}</span>
+                                <h3 class="text-2xl font-black mt-2 tracking-tight">{{ m.ad }}</h3>
+                            </div>
+                            <div class="text-4xl font-black text-white/5">#{{ index + 1 }}</div>
+                        </div>
+
+                        <div class="space-y-3 mb-8">
+                            <div v-for="s in asamalar" :key="s" @click="toggleStep(m, s)" class="flex justify-between items-center p-3 rounded-xl bg-white/5 hover:bg-white/10 cursor-pointer transition">
+                                <span class="text-xs font-medium text-slate-300">{{ s }}</span>
+                                <div :class="m.durumlar[s] ? 'bg-green-500 shadow-[0_0_15px_rgba(34,197,94,0.4)]' : 'bg-slate-700'" class="w-6 h-6 rounded-lg flex items-center justify-center transition-all">
+                                    <span v-if="m.durumlar[s]" class="text-[10px] font-bold">✓</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-6">
+                            <label class="text-[9px] font-black uppercase text-slate-500 tracking-widest mb-2 block">Proje Notları</label>
+                            <textarea v-model="m.notlar" @input="debouncedSave" placeholder="Saha notlarını buraya yazın..." class="w-full bg-slate-900/50 border border-white/5 rounded-xl p-3 text-sm focus:outline-none focus:border-green-500/50 min-h-[80px]"></textarea>
+                        </div>
+
+                        <div class="relative pt-4">
+                            <div class="flex justify-between text-[10px] font-black mb-2">
+                                <span class="uppercase text-slate-400">İşlem Hızı</span>
+                                <span class="text-green-400 font-brand">%{{ calculateProgress(m) }}</span>
+                            </div>
+                            <div class="h-2 bg-slate-800 rounded-full overflow-hidden">
+                                <div class="h-full bg-gradient-to-r from-green-600 to-emerald-400 transition-all duration-1000" :style="{ width: calculateProgress(m) + '%' }"></div>
+                            </div>
+                        </div>
+
+                        <button @click="sil(index)" class="mt-6 text-[9px] text-red-500/50 hover:text-red-500 font-bold uppercase">Projeyi Arşivle</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <div v-if="showAddModal" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-950/90 backdrop-blur-md">
+            <div class="glass p-10 rounded-[3rem] w-full max-w-md border-green-500/30">
+                <h2 class="text-3xl font-brand font-black mb-2">YENİ <span class="text-green-500">GES</span></h2>
+                <p class="text-slate-400 text-sm mb-8 font-medium italic">Saha bilgilerini sisteme tanımlayın.</p>
+                <input v-model="newMusteri.ad" placeholder="Müşteri Adı" class="w-full bg-slate-800 border-none p-5 rounded-2xl mb-4 font-bold focus:ring-2 focus:ring-green-500 outline-none">
+                <input v-model="newMusteri.sehir" placeholder="İl (Örn: Konya)" class="w-full bg-slate-800 border-none p-5 rounded-2xl mb-8 font-bold focus:ring-2 focus:ring-green-500 outline-none">
+                <div class="flex gap-4">
+                    <button @click="showAddModal = false" class="flex-1 font-bold text-slate-500">VAZGEÇ</button>
+                    <button @click="addMusteri" class="flex-1 bg-green-600 py-5 rounded-2xl font-black hover:bg-green-500 transition shadow-xl">BAŞLAT</button>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        const { createApp } = Vue
-        // SİZİN İÇİN OLUŞTURDUĞUM ÖZEL DEPO ADRESİ:
-        const API_URL = "https://api.jsonbin.io/v3/b/659850121f5677401f5898d4"; 
-        const API_KEY = "$2a$10$7v278YFpM9r2.yD.0O3.8.v.6V.H6H6H6H6H6H6H6H6H6H6H6H6H6"; // Bu geçici bir anahtardır
+        const { createApp } = Vue;
+        const API_URL = "https://api.npoint.io/6889d80d6f4661858972"; 
 
         createApp({
             data() {
                 return {
                     showAddModal: false,
-                    asamalar: ["Çağrı Mektubu", "Projelendirme", "Kabul", "Devir"],
+                    rates: { USD: '0.00', EUR: '0.00' },
+                    asamalar: ["Çağrı Mektubu", "Projelendirme", "Bağlantı Anlaşması", "Kabul Aşaması"],
                     musteriler: [],
-                    newMusteri: { ad: '', sehir: '' }
+                    newMusteri: { ad: '', sehir: '' },
+                    saveTimeout: null
                 }
             },
-            mounted() { this.verileriYukle(); },
+            mounted() { 
+                this.verileriYukle();
+                this.kurlariAl();
+                setInterval(this.kurlariAl, 600000); // 10 dakikada bir kurları güncelle
+            },
             methods: {
+                async kurlariAl() {
+                    try {
+                        const res = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
+                        const data = await res.json();
+                        this.rates.USD = data.rates.TRY.toFixed(2);
+                        this.rates.EUR = (data.rates.TRY / data.rates.EUR).toFixed(2);
+                    } catch (e) { console.log("Kur hatası"); }
+                },
                 async verileriYukle() {
-                    const res = await fetch('https://api.myjson.online/v1/records/06896684-0612-426b-871d-15794578147d');
+                    const res = await fetch(API_URL);
                     const data = await res.json();
-                    this.musteriler = data.data.musteriler || [];
+                    this.musteriler = data.musteriler || [];
+                },
+                debouncedSave() {
+                    clearTimeout(this.saveTimeout);
+                    this.saveTimeout = setTimeout(this.saveData, 1000);
                 },
                 async saveData() {
-                    await fetch('https://api.myjson.online/v1/records/06896684-0612-426b-871d-15794578147d', {
-                        method: 'PUT',
+                    await fetch(API_URL, {
+                        method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ data: { musteriler: this.musteriler } })
+                        body: JSON.stringify({ musteriler: this.musteriler })
                     });
                 },
                 addMusteri() {
+                    if(!this.newMusteri.ad) return;
                     const durumlar = {}; this.asamalar.forEach(s => durumlar[s] = false);
-                    this.musteriler.push({ ad: this.newMusteri.ad, sehir: this.newMusteri.sehir, durumlar });
+                    this.musteriler.push({ 
+                        ad: this.newMusteri.ad, 
+                        sehir: this.newMusteri.sehir, 
+                        durumlar,
+                        notlar: '' 
+                    });
                     this.saveData();
                     this.showAddModal = false;
                     this.newMusteri = { ad: '', sehir: '' };
+                },
+                toggleStep(m, s) {
+                    m.durumlar[s] = !m.durumlar[s];
+                    this.saveData();
+                },
+                sil(index) {
+                    if(confirm('Proje arşive alınsın mı?')) {
+                        this.musteriler.splice(index, 1);
+                        this.saveData();
+                    }
                 },
                 calculateProgress(m) {
                     const done = Object.values(m.durumlar).filter(v => v === true).length;
@@ -93,3 +174,4 @@
     </script>
 </body>
 </html>
+
