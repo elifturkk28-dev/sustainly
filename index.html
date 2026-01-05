@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sustainly SAP - Kurumsal Yönetim</title>
+    <title>Sustainly SAP - Kurumsal V3 (Takvimli)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
@@ -11,90 +11,127 @@
         body { font-family: 'Inter', sans-serif; background: #020617; color: white; margin: 0; }
         .font-brand { font-family: 'Orbitron', sans-serif; }
         .bg-solar { 
-            background: linear-gradient(rgba(2, 6, 23, 0.8), rgba(2, 6, 23, 0.95)), 
+            background: linear-gradient(rgba(2, 6, 23, 0.88), rgba(2, 6, 23, 0.96)), 
             url('https://images.unsplash.com/photo-1509391366360-2e959784a276?auto=format&fit=crop&w=1920&q=80');
             background-size: cover; background-position: center; background-attachment: fixed;
         }
         .glass { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.1); }
-        .btn-green { background: #22c55e; transition: all 0.3s; }
-        .btn-green:hover { background: #16a34a; transform: translateY(-2px); shadow: 0 10px 15px -3px rgba(34, 197, 94, 0.4); }
+        .active-tab { border-bottom: 3px solid #22c55e; color: #22c55e; }
+        input, textarea, select { background: rgba(0,0,0,0.5) !important; border: 1px solid rgba(255,255,255,0.1) !important; color: white !important; }
+        .scroll-custom::-webkit-scrollbar { width: 5px; }
+        .scroll-custom::-webkit-scrollbar-thumb { background: #22c55e; border-radius: 10px; }
     </style>
 </head>
 <body class="bg-solar min-h-screen">
     <div id="app">
         
         <div v-if="!isLoggedIn" class="h-screen flex items-center justify-center p-4">
-            <div class="glass p-10 rounded-[2.5rem] w-full max-w-md shadow-2xl border-t-4 border-green-500">
-                <h1 class="font-brand text-3xl text-green-500 text-center mb-8 tracking-widest">SUSTAINLY</h1>
-                <div class="space-y-4">
-                    <input v-model="login.user" placeholder="Kullanıcı Adı" class="w-full bg-black/40 border border-white/10 p-4 rounded-xl outline-none focus:border-green-500 font-bold">
-                    <input v-model="login.pass" type="password" placeholder="Şifre" @keyup.enter="doLogin" class="w-full bg-black/40 border border-white/10 p-4 rounded-xl outline-none focus:border-green-500 font-bold">
-                    <button @click="doLogin" class="w-full btn-green py-4 rounded-xl font-black text-white uppercase tracking-widest">Sisteme Gir</button>
-                </div>
+            <div class="glass p-10 rounded-[2.5rem] w-full max-w-md shadow-2xl border-t-4 border-green-500 text-center">
+                <h1 class="font-brand text-3xl text-green-500 mb-8 tracking-widest">SUSTAINLY</h1>
+                <input v-model="login.user" placeholder="Personel Adı" class="w-full p-4 rounded-xl mb-4 outline-none font-bold">
+                <input v-model="login.pass" type="password" placeholder="Şifre" @keyup.enter="doLogin" class="w-full p-4 rounded-xl mb-6 outline-none font-bold">
+                <button @click="doLogin" class="w-full bg-green-600 py-4 rounded-xl font-black uppercase shadow-lg shadow-green-900/40">Giriş Yap</button>
             </div>
         </div>
 
         <div v-else class="p-4 md:p-8">
-            <div class="glass rounded-3xl p-6 mb-8 flex flex-col md:flex-row justify-between items-center gap-4">
-                <div class="flex items-center gap-6">
-                    <h2 class="font-brand text-xl text-green-500 tracking-tighter">SUSTAINLY SAP</h2>
-                    <div class="flex gap-4 text-xs font-bold border-l border-white/20 pl-6">
-                        <span class="text-slate-400">USD: <b class="text-white">{{ kurlar.USD }}₺</b></span>
-                        <span class="text-slate-400">EUR: <b class="text-white">{{ kurlar.EUR }}₺</b></span>
+            <header class="glass rounded-3xl p-6 mb-8">
+                <div class="flex flex-col md:flex-row justify-between items-center gap-6">
+                    <div class="flex items-center gap-8">
+                        <h2 class="font-brand text-2xl text-green-500">SUSTAINLY</h2>
+                        <nav class="flex gap-6 text-xs font-black tracking-widest uppercase">
+                            <button @click="activeTab = 'ana'" :class="{'active-tab': activeTab === 'ana'}" class="pb-2">Anasayfa</button>
+                            <button @click="activeTab = 'iller'" :class="{'active-tab': activeTab === 'iller'}" class="pb-2">İller</button>
+                            <button @click="activeTab = 'teklifler'" :class="{'active-tab': activeTab === 'teklifler'}" class="pb-2">Teklifler</button>
+                        </nav>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <div class="hidden md:flex gap-4 bg-black/40 px-5 py-2 rounded-2xl border border-white/5 font-bold text-[10px]">
+                            <span class="text-slate-400">USD: <b class="text-green-400">{{ kurlar.USD }}₺</b></span>
+                            <span class="text-slate-400">EUR: <b class="text-blue-400">{{ kurlar.EUR }}₺</b></span>
+                        </div>
+                        <button @click="logout" class="text-[10px] bg-red-500/20 text-red-500 px-3 py-1 rounded-lg">ÇIKIŞ</button>
                     </div>
                 </div>
-                <div class="flex items-center gap-4">
-                    <span class="text-[10px] font-black uppercase text-green-400">Personel: {{ currentUser }}</span>
-                    <button @click="logout" class="text-[10px] text-red-500 font-bold border border-red-500/20 px-3 py-1 rounded-lg">ÇIKIŞ</button>
-                </div>
-            </div>
+            </header>
 
-            <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+            <div v-if="activeTab === 'ana'" class="grid grid-cols-1 lg:grid-cols-4 gap-8">
                 <div class="lg:col-span-3 space-y-6">
-                    <div class="flex justify-between items-center bg-white/5 p-4 rounded-2xl">
-                        <h3 class="font-bold uppercase text-sm tracking-widest text-slate-400">Aktif Proje Takibi</h3>
-                        <button @click="yeniMusteri" class="btn-green px-6 py-2 rounded-xl text-xs font-black">+ YENİ MÜŞTERİ</button>
+                    <div class="flex justify-between items-center bg-white/5 p-4 rounded-2xl border border-white/5">
+                        <h3 class="font-bold text-xs uppercase tracking-widest text-slate-400">Proje Havuzu</h3>
+                        <button @click="yeniMusteri" class="bg-green-600 px-6 py-2 rounded-xl text-xs font-black">+ YENİ MÜŞTERİ</button>
                     </div>
-
-                    <div v-for="(m, i) in musteriler" :key="i" class="glass rounded-[2rem] p-6 border-l-4 border-green-500">
+                    <div v-for="(m, i) in musteriler" :key="i" class="glass rounded-[2rem] p-6 border-l-4 border-green-500 transition-all hover:scale-[1.01]">
                         <div class="flex justify-between mb-4">
-                            <div>
-                                <h4 class="text-xl font-black">{{ m.ad }}</h4>
-                                <p class="text-[10px] font-bold text-green-500 uppercase">{{ m.sehir }}</p>
-                            </div>
-                            <button @click="sil(i)" class="opacity-20 hover:opacity-100 text-red-500 text-xs">SİL</button>
+                            <span><b class="text-xl">{{ m.ad }}</b> <small class="text-xs text-green-500 block uppercase font-bold">{{ m.sehir }}</small></span>
+                            <button @click="sil(i)" class="text-[10px] text-red-500 opacity-30 hover:opacity-100 font-bold uppercase">Projeyi Sil</button>
                         </div>
-
-                        <div class="grid grid-cols-2 md:grid-cols-3 gap-2 mb-6">
+                        <div class="grid grid-cols-2 md:grid-cols-3 gap-2 mb-4">
                             <button v-for="s in asamalar" :key="s" @click="toggle(m, s)"
-                                :class="m.durum[s] ? 'bg-green-600 text-white' : 'bg-slate-900 text-slate-500 border border-white/5'"
-                                class="text-[10px] font-bold p-3 rounded-xl transition-all">
-                                {{ s }}
-                            </button>
+                                :class="m.durum[s] ? 'bg-green-600 text-white' : 'bg-slate-900 text-slate-500'"
+                                class="text-[10px] font-bold p-3 rounded-xl transition-all">{{ s }}</button>
                         </div>
-
-                        <div class="flex items-center gap-4">
-                            <div class="flex-1 bg-black/40 h-2 rounded-full overflow-hidden">
-                                <div class="bg-green-500 h-full transition-all" :style="{width: yuzde(m)+'%'}"></div>
-                            </div>
+                        <div class="flex items-center gap-3">
+                            <div class="flex-1 bg-black/40 h-2 rounded-full overflow-hidden"><div class="bg-green-500 h-full transition-all duration-700" :style="{width: yuzde(m)+'%'}"></div></div>
                             <span class="text-xs font-black text-green-500">%{{ yuzde(m) }}</span>
                         </div>
                     </div>
                 </div>
 
                 <div class="lg:col-span-1 space-y-6">
-                    <div class="glass p-6 rounded-[2rem] sticky top-28">
-                        <h3 class="font-bold text-xs uppercase tracking-widest mb-4 text-green-500">Genel Saha Notları</h3>
-                        <textarea v-model="genelNot" class="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-xs h-64 outline-none focus:border-green-500" placeholder="Bugün yapılacaklar, eksik malzemeler..."></textarea>
-                        
-                        <div class="mt-8 space-y-3">
-                            <button @click="verileriSistemeIsle" class="w-full bg-green-600 hover:bg-green-400 py-6 rounded-2xl font-black text-white shadow-2xl shadow-green-900/40 transition-all uppercase tracking-tighter">
-                                💾 VERİLERİ SİSTEME İŞLE
-                            </button>
-                            <p class="text-[9px] text-center text-slate-500 font-bold italic">Son Kayıt: {{ sonKayit }}</p>
+                    <div class="glass p-6 rounded-[2rem] border-t-4 border-blue-500">
+                        <h3 class="text-xs font-black text-blue-400 uppercase mb-4 tracking-widest flex justify-between">
+                            AJANDA <span>📅</span>
+                        </h3>
+                        <div class="space-y-3 mb-4 max-h-60 overflow-y-auto scroll-custom pr-2">
+                            <div v-for="(h, hi) in hatirlaticilarSirali" :key="hi" class="bg-black/30 p-3 rounded-xl border border-white/5 relative group">
+                                <p class="text-[10px] font-black text-blue-300">{{ h.tarih }}</p>
+                                <p class="text-xs font-bold">{{ h.not }}</p>
+                                <button @click="hatirlaticiSil(hi)" class="absolute top-2 right-2 text-[8px] text-red-500 opacity-0 group-hover:opacity-100 transition">SİL</button>
+                            </div>
+                        </div>
+                        <div class="space-y-2 border-t border-white/10 pt-4">
+                            <input v-model="yeniH.tarih" type="date" class="w-full p-2 rounded-lg text-xs outline-none">
+                            <input v-model="yeniH.not" placeholder="Hatırlatma notu..." class="w-full p-2 rounded-lg text-xs outline-none">
+                            <button @click="hatirlaticiEkle" class="w-full bg-blue-600 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest">Ekle</button>
                         </div>
                     </div>
+
+                    <div class="glass p-6 rounded-[2rem] border-t-4 border-green-500">
+                        <h3 class="text-xs font-black text-green-500 uppercase mb-4 tracking-widest">Genel Notlar</h3>
+                        <textarea v-model="genelNot" class="w-full p-4 rounded-xl text-xs h-40 outline-none resize-none" placeholder="Notlar..."></textarea>
+                        <button @click="verileriSistemeIsle" class="w-full bg-green-600 mt-6 py-5 rounded-2xl font-black shadow-xl uppercase transition hover:bg-green-500">💾 SİSTEME İŞLE</button>
+                        <p class="text-[9px] text-center mt-2 text-slate-500 font-bold uppercase italic">Son Senkron: {{ sonKayit }}</p>
+                    </div>
                 </div>
+            </div>
+
+            <div v-if="activeTab === 'iller'" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div v-for="(grup, sehir) in illerGrupla" :key="sehir" class="glass p-6 rounded-[2rem] border-b-4 border-green-500">
+                    <h4 class="text-lg font-black text-green-500 uppercase mb-4 border-b border-white/10 pb-2">{{ sehir }}</h4>
+                    <div v-for="p in grup" class="flex justify-between text-sm mb-2 font-bold">
+                        <span>{{ p.ad }}</span> <span class="text-green-500">%{{ yuzde(p) }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div v-if="activeTab === 'teklifler'" class="glass overflow-hidden rounded-[2rem]">
+                <div class="p-6 flex justify-between items-center border-b border-white/10">
+                    <h2 class="text-xl font-brand text-green-500">FİYAT TEKLİFLERİ</h2>
+                    <button @click="yeniTeklif" class="bg-blue-600 px-6 py-2 rounded-xl text-xs font-black uppercase">+ Yeni Teklif</button>
+                </div>
+                <table class="w-full text-left text-sm">
+                    <thead class="bg-black/50 text-[10px] font-black uppercase tracking-widest">
+                        <tr><th class="p-5">Firma</th><th class="p-5">Tutar</th><th class="p-5">Dosya</th><th class="p-5">İşlem</th></tr>
+                    </thead>
+                    <tbody class="divide-y divide-white/5">
+                        <tr v-for="(t, i) in teklifler" :key="i" class="hover:bg-white/5">
+                            <td class="p-5 font-bold">{{ t.firma }}</td><td class="p-5 text-green-400 font-bold">{{ t.tutar }}</td>
+                            <td class="p-5"><a v-if="t.link" :href="t.link" target="_blank" class="text-blue-400 underline italic">Görüntüle</a></td>
+                            <td class="p-5"><button @click="teklifSil(i)" class="text-red-500 text-xs font-bold uppercase">SİL</button></td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
@@ -104,78 +141,96 @@
         createApp({
             data() {
                 return {
-                    isLoggedIn: false,
-                    currentUser: '',
-                    sonKayit: '-',
-                    login: { user: '', pass: '' },
-                    kurlar: { USD: '...', EUR: '...' },
+                    isLoggedIn: false, currentUser: '', sonKayit: '-', activeTab: 'ana',
+                    login: { user: '', pass: '' }, kurlar: { USD: '...', EUR: '...' },
                     asamalar: ["Başvuru", "Çağrı Mektubu", "Proje Onay", "Bağlantı Anl.", "Montaj", "Kabul"],
-                    musteriler: [],
-                    genelNot: ''
+                    musteriler: [], teklifler: [], hatirlaticilar: [], genelNot: '',
+                    yeniH: { tarih: '', not: '' }
+                }
+            },
+            computed: {
+                illerGrupla() {
+                    return this.musteriler.reduce((acc, obj) => {
+                        const key = (obj.sehir || 'DİĞER').toUpperCase();
+                        if (!acc[key]) acc[key] = [];
+                        acc[key].push(obj);
+                        return acc;
+                    }, {});
+                },
+                hatirlaticilarSirali() {
+                    return [...this.hatirlaticilar].sort((a, b) => new Date(a.tarih) - new Date(b.tarih));
                 }
             },
             mounted() {
                 this.kurCek();
                 const session = localStorage.getItem('sustainly_session');
                 if(session) { this.isLoggedIn = true; this.currentUser = session; }
-                
-                const data = localStorage.getItem('sustainly_storage');
+                const data = localStorage.getItem('sustainly_v3_final');
                 if(data) {
-                    const parsed = JSON.parse(data);
-                    this.musteriler = parsed.musteriler || [];
-                    this.genelNot = parsed.genelNot || '';
-                    this.sonKayit = parsed.tarih || '-';
+                    const p = JSON.parse(data);
+                    this.musteriler = p.musteriler || [];
+                    this.teklifler = p.teklifler || [];
+                    this.hatirlaticilar = p.hatirlaticilar || [];
+                    this.genelNot = p.genelNot || '';
+                    this.sonKayit = p.tarih || '-';
                 }
             },
             methods: {
                 async kurCek() {
                     try {
-                        // TCMB verisi için güvenilir bir ara servis
                         const res = await fetch('https://api.exchangerate-api.com/v4/latest/TRY');
-                        const data = await res.json();
-                        this.kurlar.USD = (1 / data.rates.USD).toFixed(2);
-                        this.kurlar.EUR = (1 / data.rates.EUR).toFixed(2);
-                    } catch(e) { console.log("Kur alınamadı."); }
+                        const d = await res.json();
+                        this.kurlar.USD = (1/d.rates.USD).toFixed(2);
+                        this.kurlar.EUR = (1/d.rates.EUR).toFixed(2);
+                    } catch(e) { this.kurlar = {USD:'0.00', EUR:'0.00'}; }
                 },
                 doLogin() {
-                    // Basit Personel Girişi
                     if(this.login.user && this.login.pass === '1234') {
-                        this.isLoggedIn = true;
-                        this.currentUser = this.login.user;
+                        this.isLoggedIn = true; this.currentUser = this.login.user;
                         localStorage.setItem('sustainly_session', this.currentUser);
-                    } else { alert("Hatalı Giriş!"); }
+                    } else { alert("Şifre Hatalı! (Varsayılan: 1234)"); }
                 },
-                logout() {
-                    this.isLoggedIn = false;
-                    localStorage.removeItem('sustainly_session');
-                },
+                logout() { this.isLoggedIn = false; localStorage.removeItem('sustainly_session'); },
                 yeniMusteri() {
-                    const ad = prompt("Müşteri Adı:");
+                    const ad = prompt("Müşteri/Proje Adı:");
                     const sehir = prompt("Şehir:");
-                    if(ad) {
-                        this.musteriler.unshift({ ad, sehir, durum: {}, notlar: '' });
+                    if(ad) this.musteriler.unshift({ ad, sehir, durum: {} });
+                },
+                yeniTeklif() {
+                    const firma = prompt("Firma:");
+                    const tutar = prompt("Tutar:");
+                    const link = prompt("Dosya Linki:");
+                    if(firma) this.teklifler.unshift({ firma, tutar, link });
+                },
+                hatirlaticiEkle() {
+                    if(this.yeniH.tarih && this.yeniH.not) {
+                        this.hatirlaticilar.push({...this.yeniH});
+                        this.yeniH = { tarih: '', not: '' };
                     }
                 },
                 toggle(m, s) { m.durum[s] = !m.durum[s]; },
                 yuzde(m) {
-                    const ok = Object.values(m.durum).filter(v => v).length;
+                    const ok = Object.values(m.durum || {}).filter(v => v).length;
                     return Math.round((ok / this.asamalar.length) * 100);
                 },
-                sil(i) { if(confirm('Silinsin mi?')) this.musteriler.splice(i, 1); },
+                sil(i) { if(confirm('Proje silinsin mi?')) this.musteriler.splice(i, 1); },
+                teklifSil(i) { if(confirm('Teklif silinsin mi?')) this.teklifler.splice(i, 1); },
+                hatirlaticiSil(i) { this.hatirlaticilar.splice(i, 1); },
                 verileriSistemeIsle() {
                     const tarih = new Date().toLocaleString('tr-TR');
-                    const data = {
-                        musteriler: this.musteriler,
-                        genelNot: this.genelNot,
-                        tarih: tarih
+                    const d = { 
+                        musteriler: this.musteriler, 
+                        teklifler: this.teklifler, 
+                        hatirlaticilar: this.hatirlaticilar,
+                        genelNot: this.genelNot, 
+                        tarih: tarih 
                     };
-                    localStorage.setItem('sustainly_storage', JSON.stringify(data));
+                    localStorage.setItem('sustainly_v3_final', JSON.stringify(d));
                     this.sonKayit = tarih;
-                    alert("Tüm veriler tarayıcı hafızasına güvenli bir şekilde işlendi!");
+                    alert("Tüm veriler sisteme işlendi!");
                 }
             }
         }).mount('#app')
     </script>
 </body>
 </html>
-
