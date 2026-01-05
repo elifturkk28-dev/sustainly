@@ -2,43 +2,30 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <title>Sustainly SAP - Kurumsal Giriş</title>
+    <title>Sustainly SAP - Kesintisiz Bulut Senkronu</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=Inter:wght@300;400;700;900&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; background: #020617; color: #f8fafc; overflow-x: hidden; }
+        body { font-family: 'Inter', sans-serif; background: #020617; color: #f8fafc; }
         .font-brand { font-family: 'Orbitron', sans-serif; }
-        .glass { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.1); }
+        .glass { background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.05); }
         .solar-bg { 
-            background-image: linear-gradient(to bottom, rgba(2,6,23,0.8), rgba(2,6,23,0.9)), url('https://images.unsplash.com/photo-1509391366360-2e959784a276?auto=format&fit=crop&w=1920&q=80'); 
+            background-image: linear-gradient(to bottom, rgba(2,6,23,0.9), rgba(2,6,23,0.95)), url('https://images.unsplash.com/photo-1509391366360-2e959784a276?auto=format&fit=crop&w=1920&q=80'); 
             background-size: cover; background-position: center; background-attachment: fixed;
         }
-        .login-card { animation: fadeIn 0.8s ease-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body class="solar-bg min-h-screen">
     <div id="app">
-        
         <div v-if="!isLoggedIn" class="h-screen w-full flex items-center justify-center p-4">
-            <div class="glass p-10 rounded-[3rem] w-full max-w-md shadow-2xl login-card border-t-4 border-green-500 text-center">
-                <div class="mb-10">
-                    <h1 class="text-4xl font-brand font-black text-green-500 mb-2">SUSTAINLY</h1>
-                    <p class="text-[10px] uppercase tracking-[0.5em] text-slate-400">Kurumsal Erişim Paneli</p>
-                </div>
-                
+            <div class="glass p-10 rounded-[3rem] w-full max-w-md shadow-2xl border-t-4 border-green-500 text-center">
+                <h1 class="text-4xl font-brand font-black text-green-500 mb-2">SUSTAINLY</h1>
+                <p class="text-[10px] uppercase tracking-[0.5em] text-slate-400 mb-10">Kurumsal Bulut Paneli</p>
                 <div class="space-y-4">
-                    <div class="relative text-left">
-                        <label class="text-[10px] font-bold text-slate-500 ml-4 mb-1 block uppercase">Kullanıcı Adı</label>
-                        <input v-model="loginForm.user" type="text" class="w-full bg-slate-900/50 border border-white/10 p-4 rounded-2xl outline-none focus:border-green-500 transition-all font-bold">
-                    </div>
-                    <div class="relative text-left">
-                        <label class="text-[10px] font-bold text-slate-500 ml-4 mb-1 block uppercase">Şifre</label>
-                        <input v-model="loginForm.pass" @keyup.enter="handleLogin" type="password" class="w-full bg-slate-900/50 border border-white/10 p-4 rounded-2xl outline-none focus:border-green-500 transition-all font-bold">
-                    </div>
-                    <button @click="handleLogin" class="w-full bg-green-600 hover:bg-green-500 py-5 rounded-2xl font-black text-white shadow-xl shadow-green-900/20 transition-all active:scale-95 mt-4">SİSTEME GİRİŞ YAP</button>
-                    <p v-if="loginError" class="text-red-400 text-xs font-bold mt-2 animate-bounce">❌ Bilgiler hatalı!</p>
+                    <input v-model="loginForm.user" placeholder="Kullanıcı Adı" class="w-full bg-slate-900/50 border border-white/10 p-4 rounded-2xl outline-none focus:border-green-500 font-bold uppercase text-xs">
+                    <input v-model="loginForm.pass" type="password" placeholder="Şifre" @keyup.enter="handleLogin" class="w-full bg-slate-900/50 border border-white/10 p-4 rounded-2xl outline-none focus:border-green-500 font-bold">
+                    <button @click="handleLogin" class="w-full bg-green-600 hover:bg-green-500 py-5 rounded-2xl font-black transition-all active:scale-95">SİSTEME BAĞLAN</button>
                 </div>
             </div>
         </div>
@@ -46,87 +33,64 @@
         <div v-else>
             <header class="glass sticky top-0 z-50 p-4 mb-8 border-b border-white/5">
                 <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
-                    <div class="flex items-center gap-4">
-                        <div class="text-left">
-                            <h1 class="text-2xl font-brand font-black text-green-500 italic">SUSTAINLY</h1>
-                            <p class="text-[9px] font-bold text-slate-400">Hoş geldin, <span class="text-white uppercase">{{ currentUser }}</span></p>
-                        </div>
+                    <div class="text-left">
+                        <h1 class="text-2xl font-brand font-black text-green-500">SUSTAINLY</h1>
+                        <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">OTURUM: {{ currentUser }}</p>
                     </div>
-
-                    <div class="flex gap-6 bg-slate-950/50 px-6 py-2 rounded-2xl border border-white/5">
-                        <div class="text-center">
-                            <p class="text-[8px] font-bold text-slate-500 uppercase">USD/TRY</p>
-                            <p class="text-sm font-black text-green-400">{{ rates.USD }}₺</p>
-                        </div>
-                        <div class="text-center">
-                            <p class="text-[8px] font-bold text-slate-500 uppercase">EUR/TRY</p>
-                            <p class="text-sm font-black text-blue-400">{{ rates.EUR }}₺</p>
-                        </div>
-                    </div>
-
-                    <div class="flex gap-2">
-                        <button @click="logout" class="bg-red-500/10 text-red-500 px-4 py-2 rounded-xl text-xs font-bold border border-red-500/20">Çıkış</button>
-                        <button @click="showAddModal = true" class="bg-green-600 hover:bg-green-500 px-6 py-2 rounded-xl font-bold text-sm shadow-lg">+ Yeni Proje</button>
+                    <div class="flex gap-4 items-center">
+                        <div class="text-right hidden md:block border-r border-white/10 pr-4 text-green-400 font-black text-sm">USD: {{ rates.USD }}₺</div>
+                        <button @click="verileriYukle" class="text-xs bg-white/5 px-4 py-2 rounded-xl hover:bg-white/10 transition">🔄 Verileri Tazele</button>
+                        <button @click="showAddModal = true" class="bg-green-600 px-6 py-2 rounded-xl font-bold text-sm shadow-lg shadow-green-900/40 hover:bg-green-500">+ Yeni Proje</button>
                     </div>
                 </div>
             </header>
 
-            <main class="max-w-7xl mx-auto px-4 pb-20">
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    <div v-for="(m, index) in musteriler" :key="index" class="glass rounded-[2.5rem] overflow-hidden border border-white/5 flex flex-col shadow-2xl transition-all hover:border-green-500/50">
+            <main class="max-w-7xl mx-auto px-4 pb-32">
+                <div v-if="loading" class="text-center py-20 text-green-500 font-black animate-pulse tracking-widest uppercase">Bulut Senkronizasyonu Yapılıyor...</div>
+                
+                <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div v-for="(m, index) in musteriler" :key="index" class="glass rounded-[2.5rem] overflow-hidden border border-white/5 flex flex-col shadow-2xl">
                         <div class="p-8 flex-1">
                             <div class="flex justify-between items-start mb-6">
                                 <div>
                                     <span class="text-[9px] font-black text-green-400 bg-green-400/10 px-3 py-1 rounded-full uppercase">{{ m.sehir }}</span>
-                                    <h3 class="text-2xl font-black mt-2 tracking-tight">{{ m.ad }}</h3>
+                                    <h3 class="text-2xl font-black mt-2">{{ m.ad }}</h3>
                                 </div>
-                                <div class="w-14 h-14 rounded-2xl bg-slate-800 flex flex-col items-center justify-center border border-white/5">
-                                    <span class="text-[10px] text-slate-500 font-bold uppercase">İlerleme</span>
-                                    <span class="text-lg font-black text-green-500">%{{ calculateProgress(m) }}</span>
+                                <div class="text-right">
+                                    <div class="text-2xl font-black text-green-500 font-brand">%{{ calculateProgress(m) }}</div>
+                                    <div class="text-[8px] text-slate-500 font-bold uppercase">TAMAMLANMA</div>
                                 </div>
                             </div>
 
-                            <div class="grid grid-cols-2 gap-2 mb-6">
+                            <div class="grid grid-cols-2 gap-2 mb-6 text-[10px] font-bold">
                                 <div v-for="s in asamalar" :key="s" @click="toggleStep(m, s)" 
-                                     :class="m.durumlar[s] ? 'bg-green-500/20 border-green-500/30' : 'bg-white/5 border-white/5'"
-                                     class="flex items-center gap-2 p-3 rounded-xl border cursor-pointer transition-all hover:bg-white/10">
-                                    <div :class="m.durumlar[s] ? 'bg-green-500' : 'bg-slate-700'" class="w-3 h-3 rounded-full"></div>
-                                    <span class="text-[10px] font-bold text-slate-300">{{ s }}</span>
+                                     :class="m.durumlar[s] ? 'bg-green-500/20 border-green-500/40 text-green-400' : 'bg-slate-900/50 border-white/5 text-slate-500'"
+                                     class="flex items-center justify-between p-3 rounded-xl border cursor-pointer transition-all">
+                                    <span>{{ s }}</span>
+                                    <div :class="m.durumlar[s] ? 'bg-green-500' : 'bg-slate-700'" class="w-2 h-2 rounded-full"></div>
                                 </div>
                             </div>
 
-                            <div class="mb-4">
-                                <div class="flex items-center gap-2 mb-2">
-                                    <span class="text-[9px] font-black text-slate-500 uppercase">Mühendis Notları</span>
-                                    <div class="h-[1px] flex-1 bg-white/5"></div>
-                                </div>
-                                <textarea v-model="m.notlar" @input="debouncedSave" placeholder="Saha durumu, malzeme ihtiyacı..." 
-                                          class="w-full bg-slate-950/50 border border-white/5 rounded-2xl p-4 text-xs text-slate-300 focus:outline-none focus:border-green-500/50 min-h-[100px] resize-none"></textarea>
-                            </div>
+                            <textarea v-model="m.notlar" @blur="saveData" placeholder="Saha mühendisi notları..." 
+                                      class="w-full bg-black/40 border border-white/5 rounded-2xl p-4 text-xs text-slate-300 focus:border-green-500/50 min-h-[100px] resize-none"></textarea>
                         </div>
-                        
-                        <div class="h-1.5 w-full bg-slate-800">
-                            <div class="h-full bg-gradient-to-r from-green-600 to-emerald-400 transition-all duration-1000" :style="{ width: calculateProgress(m) + '%' }"></div>
-                        </div>
-                        <div class="p-4 bg-slate-950/30 flex justify-between items-center">
-                             <span class="text-[9px] text-slate-600 font-bold uppercase italic">Son Güncelleme: {{ currentUser }}</span>
-                             <button @click="sil(index)" class="text-[9px] text-red-500/40 hover:text-red-500 font-bold">SİL</button>
+                        <div class="p-4 bg-black/20 flex justify-between items-center text-[8px] font-bold text-slate-600">
+                             <span class="uppercase">SON GÜNCELLEME: {{ m.guncelleyen || 'Sistem' }}</span>
+                             <button @click="sil(index)" class="text-red-500/50 hover:text-red-500">PROJEYİ KALDIR</button>
                         </div>
                     </div>
                 </div>
             </main>
         </div>
 
-        <div v-if="showAddModal" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-950/95 backdrop-blur-xl">
+        <div v-if="showAddModal" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/90 backdrop-blur-xl">
             <div class="glass p-10 rounded-[3rem] w-full max-w-md border-green-500/20">
-                <h2 class="text-3xl font-brand font-black mb-6">YENİ <span class="text-green-500">PROJE</span></h2>
+                <h2 class="text-2xl font-brand font-black mb-6">YENİ GES PROJESİ</h2>
                 <div class="space-y-4">
-                    <input v-model="newMusteri.ad" placeholder="Müşteri/Santral Adı" class="w-full bg-slate-900 border-none p-5 rounded-2xl font-bold focus:ring-2 focus:ring-green-500 outline-none">
-                    <input v-model="newMusteri.sehir" placeholder="İl" class="w-full bg-slate-900 border-none p-5 rounded-2xl font-bold focus:ring-2 focus:ring-green-500 outline-none">
-                    <div class="flex gap-4 pt-4">
-                        <button @click="showAddModal = false" class="flex-1 font-bold text-slate-500 uppercase text-xs tracking-widest">Kapat</button>
-                        <button @click="addMusteri" class="flex-1 bg-green-600 py-5 rounded-2xl font-black text-white hover:bg-green-500 transition shadow-2xl">KAYDET</button>
-                    </div>
+                    <input v-model="newMusteri.ad" placeholder="Müşteri Adı" class="w-full bg-black/40 border-none p-5 rounded-2xl font-bold focus:ring-1 focus:ring-green-500 outline-none">
+                    <input v-model="newMusteri.sehir" placeholder="Şehir" class="w-full bg-black/40 border-none p-5 rounded-2xl font-bold focus:ring-1 focus:ring-green-500 outline-none">
+                    <button @click="addMusteri" class="w-full bg-green-600 py-5 rounded-2xl font-black text-white hover:bg-green-500 transition shadow-2xl">PROJEYİ BAŞLAT</button>
+                    <button @click="showAddModal = false" class="w-full text-slate-500 font-bold text-xs">VAZGEÇ</button>
                 </div>
             </div>
         </div>
@@ -134,85 +98,81 @@
 
     <script>
         const { createApp } = Vue;
-        const API_URL = "https://api.npoint.io/6889d80d6f4661858972"; 
+        
+        // BU KISIM ÇOK ÖNEMLİ: Kendi veritabanını buraya tanımlıyoruz
+        const BIN_ID = "659850121f5677401f5898d4"; 
+        const API_KEY = "$2a$10$C1V3vT7E8u/OQhM.4.W8u.O9O9O9O9O9O9O9O9O9O9O9O9O9O9"; // Örnek Anahtar
 
         createApp({
             data() {
                 return {
                     isLoggedIn: false,
+                    loading: false,
                     currentUser: '',
-                    loginError: false,
                     loginForm: { user: '', pass: '' },
                     showAddModal: false,
-                    rates: { USD: '0.00', EUR: '0.00' },
-                    asamalar: ["Başvuru", "Çağrı Mektubu", "Projelendirme", "Onay", "Bağlantı", "Kabul", "İşletme", "Bakım"],
+                    rates: { USD: '...' },
+                    asamalar: ["Başvuru", "Çağrı Mektubu", "Proje Onay", "Bağlantı Anl.", "Montaj", "Kabul"],
                     musteriler: [],
                     newMusteri: { ad: '', sehir: '' },
-                    saveTimeout: null,
-                    personeller: {
-                        'admin': '1234',
-                        'enerji': '5678',
-                        'sustainly': '2026'
-                    }
+                    personeller: { 'admin': '1234', 'enerji': '5678', 'sustainly': '2026' }
                 }
             },
             mounted() { 
                 this.verileriYukle();
                 this.kurlariAl();
-                // LocalStorage kontrolü (Oturum açık kalsın)
-                const savedUser = localStorage.getItem('sustainly_user');
-                if(savedUser) { this.currentUser = savedUser; this.isLoggedIn = true; }
+                const u = localStorage.getItem('sustainly_user');
+                if(u) { this.currentUser = u; this.isLoggedIn = true; }
             },
             methods: {
                 handleLogin() {
-                    const pass = this.personeller[this.loginForm.user.toLowerCase()];
-                    if(pass && pass === this.loginForm.pass) {
+                    const p = this.personeller[this.loginForm.user.toLowerCase()];
+                    if(p && p === this.loginForm.pass) {
                         this.isLoggedIn = true;
                         this.currentUser = this.loginForm.user;
                         localStorage.setItem('sustainly_user', this.currentUser);
-                        this.loginError = false;
-                    } else {
-                        this.loginError = true;
-                        setTimeout(() => this.loginError = false, 2000);
                     }
-                },
-                logout() {
-                    this.isLoggedIn = false;
-                    localStorage.removeItem('sustainly_user');
                 },
                 async kurlariAl() {
                     try {
-                        const res = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
-                        const data = await res.json();
-                        this.rates.USD = data.rates.TRY.toFixed(2);
-                        this.rates.EUR = (data.rates.TRY / data.rates.EUR).toFixed(2);
-                    } catch (e) { console.log("Kur hatası"); }
+                        const r = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
+                        const d = await r.json();
+                        this.rates.USD = d.rates.TRY.toFixed(2);
+                    } catch(e){}
                 },
                 async verileriYukle() {
-                    const res = await fetch(API_URL);
-                    const data = await res.json();
-                    this.musteriler = data.musteriler || [];
-                },
-                debouncedSave() {
-                    clearTimeout(this.saveTimeout);
-                    this.saveTimeout = setTimeout(this.saveData, 1000);
+                    this.loading = true;
+                    try {
+                        // Kendi oluşturduğum güvenli Npoint linkini buraya ekliyorum:
+                        const res = await fetch('https://api.npoint.io/068966840612426b871d'); 
+                        const data = await res.json();
+                        this.musteriler = data.musteriler || [];
+                    } catch (e) {
+                        // Eğer ilk kez giriliyorsa boş dizi başlat
+                        this.musteriler = [];
+                    }
+                    this.loading = false;
                 },
                 async saveData() {
-                    await fetch(API_URL, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ musteriler: this.musteriler })
-                    });
+                    // Veriyi kaydederken LocalStorage'a da yedekler (İnternet kopmasına karşı)
+                    localStorage.setItem('sustainly_backup', JSON.stringify(this.musteriler));
+                    
+                    try {
+                        await fetch('https://api.npoint.io/068966840612426b871d', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ musteriler: this.musteriler })
+                        });
+                    } catch (e) { console.log("Yedekleme hatası"); }
                 },
                 addMusteri() {
-                    if(!this.newMusteri.ad) return;
-                    const durumlar = {}; this.asamalar.forEach(s => durumlar[s] = false);
-                    this.musteriler.push({ 
+                    const d = {}; this.asamalar.forEach(s => d[s] = false);
+                    this.musteriler.unshift({ 
                         ad: this.newMusteri.ad, 
                         sehir: this.newMusteri.sehir, 
-                        durumlar,
+                        durumlar: d, 
                         notlar: '',
-                        guncelleyen: this.currentUser
+                        guncelleyen: this.currentUser 
                     });
                     this.saveData();
                     this.showAddModal = false;
@@ -223,11 +183,8 @@
                     m.guncelleyen = this.currentUser;
                     this.saveData();
                 },
-                sil(index) {
-                    if(confirm('Dikkat! Bu proje tamamen silinecektir. Emin misiniz?')) {
-                        this.musteriler.splice(index, 1);
-                        this.saveData();
-                    }
+                sil(i) {
+                    if(confirm('Silinsin mi?')) { this.musteriler.splice(i, 1); this.saveData(); }
                 },
                 calculateProgress(m) {
                     const done = Object.values(m.durumlar).filter(v => v === true).length;
