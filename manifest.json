@@ -1,0 +1,26 @@
+{
+  "id": "/sustainly/",
+  "name": "Sustainly İş Takip ve Yönetim",
+  "short_name": "Sustainly",
+  "description": "Projelerinizi ve görevlerinizi profesyonelce yönetin.",
+  "start_url": "/sustainly/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#2c3e50",
+  "orientation": "portrait",
+  "scope": "/sustainly/",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
