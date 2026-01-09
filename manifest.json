@@ -27,14 +27,14 @@
     {
       "src": "screenshot1.png",
       "sizes": "1080x1920",
-      "type": "image/png",
+      "type": "image/jpeg",
       "form_factor": "narrow",
       "label": "Sustainly Görev Listesi"
     },
     {
       "src": "screenshot2.png",
       "sizes": "1080x1920",
-      "type": "image/png",
+      "type": "image/jpeg",
       "form_factor": "narrow",
       "label": "İş Takip Ekranı"
     }
