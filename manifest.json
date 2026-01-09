@@ -1,3 +1,4 @@
+
 {
   "id": "/sustainly/",
   "name": "Sustainly İş Takip ve Yönetim",
@@ -26,15 +27,15 @@
   "screenshots": [
     {
       "src": "screenshot1.png",
-      "sizes": "1080x1920",
-      "type": "image/jpeg",
+      "sizes": "828x1792",
+      "type": "image/png",
       "form_factor": "narrow",
       "label": "Sustainly Görev Listesi"
     },
     {
       "src": "screenshot2.png",
-      "sizes": "1080x1920",
-      "type": "image/jpeg",
+      "sizes": "828x1792",
+      "type": "image/png",
       "form_factor": "narrow",
       "label": "İş Takip Ekranı"
     }
